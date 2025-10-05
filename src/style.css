@@ -1,0 +1,84 @@
+/* Fondo tipo Dragon Ball */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #ff9a00, #ff2a00);
+  color: #fff;
+}
+
+/* Contenedor de personajes */
+#app {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  padding: 40px;
+}
+
+/* Carta de personaje */
+.personaje-card {
+  background: linear-gradient(145deg, rgba(0,0,0,0.7), rgba(50,0,0,0.8));
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+  width: 250px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.personaje-card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.9);
+}
+
+/* Contenedor de la imagen */
+.personaje-card .img-container {
+  width: 100%;
+  margin-bottom: 15px;
+  background: rgba(0,0,0,0.2); /* fondo opcional para consistencia */
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Imagen completa, adaptativa */
+.personaje-card .img-container img {
+  width: 100%;     /* ocupa todo el ancho de la tarjeta */
+  height: auto;    /* mantiene proporción */
+  object-fit: contain; /* no recorta la imagen */
+  display: block;
+  border-radius: 10px; /* opcional */
+}
+
+/* Nombre */
+.personaje-card h3 {
+  margin: 10px 0;
+  font-size: 1.4rem;
+  color: #ffd700;
+  text-shadow: 2px 2px 6px #000;
+}
+
+/* Contenedor de Ki */
+.ki-container {
+  background: rgba(255,255,255,0.2);
+  border-radius: 10px;
+  height: 15px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+/* Barra de Ki */
+.ki-bar {
+  background: #00ff00;
+  height: 100%;
+  width: 0;
+  transition: width 0.5s ease;
+}
+
+/* MaxKi como texto */
+.ki-text {
+  font-size: 0.9rem;
+  margin-top: 5px;
+  color: #f0f0f0;
+}
