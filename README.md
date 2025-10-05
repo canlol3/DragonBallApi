@@ -1,3 +1,2 @@
-# vanilla-vite-ts
+# dragon ball Api
 
-[Edit in StackBlitz next generation editor ⚡️](https://stackblitz.com/~/github.com/roomeroo/vanilla-vite-ts)
