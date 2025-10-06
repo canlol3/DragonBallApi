@@ -44,8 +44,8 @@ body {
 
 /* Imagen completa, adaptativa */
 .personaje-card .img-container img {
-  width: 100%;     /* ocupa todo el ancho de la tarjeta */
-  height: auto;    /* mantiene proporción */
+  width: 100%;
+  max-height: 400px;     /* ocupa todo el ancho de la tarjeta */
   object-fit: contain; /* no recorta la imagen */
   display: block;
   border-radius: 10px; /* opcional */
