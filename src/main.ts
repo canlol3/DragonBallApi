@@ -1,9 +1,8 @@
-import { BehaviorSubject, catchError, of, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, filter, fromEvent, of, switchMap, throttleTime } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import './style.css'
 
-const btnsContainer = document.querySelector(".btns") as HTMLElement
-
+const loader = document.querySelector("#loader") as HTMLElement;
 interface Personaje{
   id: number;
   name: string;
@@ -12,13 +11,16 @@ interface Personaje{
   image: string;
 }
 const paginaActual = new BehaviorSubject(1);
-
-
+var listPesonajes: Personaje[] = [];
 
 function pintarPersonajes(personajes: Personaje[]){
 const app = document.querySelector<HTMLDivElement>("#app")!;
- app.innerHTML = personajes.map(data => `
-    <div class="personaje-card">
+ app.innerHTML += renderPersonajes(personajes);
+}
+
+function renderPersonajes(personajes: Personaje[]){
+  return personajes.map(data=>
+    `<div class="personaje-card">
       <div class="img-container">
         <img src="${data.image}" alt="${data.name}">
       </div>
@@ -28,38 +30,56 @@ const app = document.querySelector<HTMLDivElement>("#app")!;
       </div>
       <div class="ki-text">Ki: ${data.ki} / ${data.maxKi}</div>
     </div>
-  `).join('');
+  `
+  ).join('');
 }
 
-btnsContainer.addEventListener("click",(event)=>{
-  const target = event.target as HTMLElement
-  if(target.classList.contains("btn")){
-   paginaActual.next(parseInt(target.textContent!))
+paginaActual.subscribe({
+  next: (value) => {
+    if(value >= 6){
+      loader.classList.add("hidden");
+    }else{
+    loader.classList.remove("hidden");
+    }
+    fromFetch('https://dragonball-api.com/api/characters?page=' + value).pipe(
+      switchMap(response =>{
+        if(response.ok){
+          return response.json();
+        }else{
+          loader.textContent = "Error al cargar los personajes";
+          throw new Error('Error en la llamada a la API');
+        }
+      }),
+      catchError(err=>{
+        return of([{Error: true, message: err.message}]);
+      })).subscribe(data=>{
+        if("Error"in data){
+          console.error(data.Error);
+        }else{
+          data.items.forEach((p: Personaje) => listPesonajes.push(p));
+          pintarPersonajes(data.items.map((p: Personaje) => ({
+            id: p.id,
+            name: p.name,
+            ki: p.ki,
+            maxKi: p.maxKi,
+            image: p.image
+          })));
+        }
+      });
   }
+});
+function buscarNombre(nombre: string){
+  listPesonajes.forEach(p => {
+    if(p.name.toLowerCase().includes(nombre.toLowerCase())){
+
+    }
+  })
+}
+
+fromEvent(window,"scroll").pipe(
+  throttleTime(500),
+    filter(() =>(window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200)
+).subscribe(() => {
+paginaActual.next(paginaActual.value + 1);
 })
 
-paginaActual.subscribe({
-  next: (value) => fromFetch('https://dragonball-api.com/api/characters?page=' + value+"&limit=8").pipe(
-    switchMap(response =>{
-      if(response.ok){
-        return response.json();
-      }else{
-        throw new Error('Error en la llamada a la API');
-      }
-    }),
-    catchError(err=>{
-      return of([{Error: true, message: err.message}]);
-    })).subscribe(data=>{
-      if("Error"in data){
-        console.error(data.Error);
-      }else{
-        pintarPersonajes(data.items.map((p:Personaje) => ({
-          id: p.id,
-          name: p.name,
-          ki: p.ki,
-          maxKi: p.maxKi,
-          image: p.image
-        })));
-      }
-    })
-})
